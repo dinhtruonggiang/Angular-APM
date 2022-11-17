@@ -2,7 +2,7 @@ import { ProductCategory } from './product-category';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { throwError, Observable, tap, catchError } from 'rxjs';
+import { throwError, Observable, tap, catchError, startWith } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

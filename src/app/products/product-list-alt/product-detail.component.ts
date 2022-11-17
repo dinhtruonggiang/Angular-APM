@@ -11,8 +11,9 @@ import { ProductService } from '../product.service';
 export class ProductDetailComponent {
   pageTitle = 'Product Detail';
   errorMessage = '';
-  product: Product | null = null;
   productSuppliers: Supplier[] | null = null;
+
+  public selectedProduct$ = this.productService.selectedProduct$;
 
   constructor(private productService: ProductService) { }
 
