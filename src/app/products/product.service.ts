@@ -2,7 +2,7 @@ import { ProductCategoryService } from './../product-categories/product-category
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { catchError, combineLatest, map, Observable, tap, throwError, BehaviorSubject, filter } from 'rxjs';
+import { catchError, combineLatest, map, Observable, tap, throwError, BehaviorSubject, filter, Subject, merge, scan } from 'rxjs';
 
 import { Product } from './product';
 
@@ -42,7 +42,20 @@ export class ProductService {
       tap(product => console.log('selectedProduct', product))
     )
 
+  private productInsertedSubject = new Subject<Product>();
+  productInsertedAction$ = this.productInsertedSubject.asObservable();
+
+  productsWithAdd$ = merge(this.productsWithCategory$, this.productInsertedAction$)
+    .pipe(
+      scan((acc, value) => (value instanceof Array) ? [...value] : [...acc, value], [] as Product[])
+    )
+
   constructor(private http: HttpClient, private productCategoryService: ProductCategoryService) { }
+
+  addProduct(newProduct?: Product) {
+    newProduct = newProduct || this.fakeProduct();
+    this.productInsertedSubject.next(newProduct);
+  }
 
   selectedProductChanged(selectedProductId: number) : void {
     this.selectedProductSubject.next(selectedProductId);
@@ -56,7 +69,7 @@ export class ProductService {
       description: 'Our new product',
       price: 8.9,
       categoryId: 3,
-      // category: 'Toolbox',
+      category: 'Toolbox',
       quantityInStock: 30
     };
   }
